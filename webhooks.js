@@ -13,7 +13,7 @@ function run_cmd(cmd, args, callback) {
 
 
 http.createServer(function (req, res) {
-
+    
     handler(req, res, function (err) {
         res.statusCode = 404
         res.end('no such location')
@@ -37,6 +37,11 @@ handler.on('push', function (event) {
         //     run_cmd('sh', ['./deploy-dev.sh'], function(text){ console.log(text) });
 
         // }
+        res.statusCode = 200
+        res.end({
+          name: event.payload.repository.name,
+          ref: event.payload.ref
+        })
 })
 
 
