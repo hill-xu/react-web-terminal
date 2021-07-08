@@ -38,11 +38,6 @@ handler.on('push', function (event) {
         //     run_cmd('sh', ['./deploy-dev.sh'], function(text){ console.log(text) });
 
         // }
-        res.statusCode = 200
-        res.end({
-          name: event.payload.repository.name,
-          ref: event.payload.ref
-        })
 })
 
 
