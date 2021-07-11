@@ -25,7 +25,7 @@
 .content-box {
   width: 100%;
   height: calc(100% - 44px);
-  background: red;
+  background: #ddd;
   margin-top: 6px;
 }
 
