@@ -1904,6 +1904,13 @@
     "@types/webpack-sources" "*"
     source-map "^0.6.0"
 
+"@types/xterm@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.nlark.com/@types/xterm/download/@types/xterm-3.0.0.tgz#5b177010903ee1dc26fdc25d6e4e1f2490d44ce6"
+  integrity sha1-WxdwEJA+4dwm/cJdbk4fJJDUTOY=
+  dependencies:
+    xterm "*"
+
 "@types/yargs-parser@*":
   version "20.2.0"
   resolved "https://registry.yarnpkg.com/@types/yargs-parser/-/yargs-parser-20.2.0.tgz#dd3e6699ba3237f0348cd085e4698780204842f9"
@@ -11909,6 +11916,16 @@ xtend@^4.0.0, xtend@~4.0.1:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/xtend/-/xtend-4.0.2.tgz#bb72779f5fa465186b1f438f674fa347fdb5db54"
   integrity sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==
+
+xterm-addon-fit@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.npmmirror.com/xterm-addon-fit/download/xterm-addon-fit-0.5.0.tgz#2d51b983b786a97dcd6cde805e700c7f913bc596"
+  integrity sha1-LVG5g7eGqX3NbN6AXnAMf5E7xZY=
+
+xterm@*, xterm@^4.16.0:
+  version "4.16.0"
+  resolved "https://registry.npmmirror.com/xterm/download/xterm-4.16.0.tgz#af25223c72917438842121e1bcd1b60ffd7e8476"
+  integrity sha512-nAbuigL9CYkI075mdfqpnB8cHZNKxENCj1CQ9Tm5gSvWkMtkanmRN2mkHGjSaET1/3+X9BqISFFo7Pd2mXVjiQ==
 
 y18n@^4.0.0:
   version "4.0.1"
