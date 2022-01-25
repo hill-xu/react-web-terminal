@@ -33,19 +33,63 @@ function XtemIns() {
     })
 
 
+
     // 获取xterm键盘输入
     // 换行问题
     // 中间插入问题
     let cmd: string[] = []; // 操作数组
     let curIndex: number = 0; // 光标所在位置
-    let lastInputValue = ''; // 最后一个输入的值
+    let lastInputValue: string = ''; // 最后一个输入的值
+    let copyText: string = ''; // 复制的值
     // xtermIns.onData((value) => {
     //   console.log(value);
     // })
+
+    // 组合键处理
+    xtermIns.attachCustomKeyEventHandler((e) => {
+      const { 
+        type, 
+        metaKey, // mac command
+        ctrlKey, // window ctrl
+        keyCode
+      } = e
+      if (type === 'keydown') {
+        if (metaKey || ctrlKey) {
+          if (keyCode === 67 || keyCode === 88) { // ctrl + c; ctrl + v 复制
+            copyText = xtermIns.getSelection();
+            return false
+          }
+          if (keyCode === 86) {  
+            // 粘贴
+            xtermIns.clearSelection()
+            let textArr: string[] = copyText.split('')
+            let visibleTextArr = cmd.filter(item => !(item === '\x1B[C') && !(item === '\x1B[D') && !(item === '\x7F'));
+            if (curIndex < visibleTextArr.length) {
+              const afterVisibleTextArr = visibleTextArr.slice(curIndex);
+              visibleTextArr.splice(curIndex, 0, ...textArr);
+              cmd = [...visibleTextArr];
+              xtermIns.write(copyText + afterVisibleTextArr.join(''));
+              afterVisibleTextArr.forEach(() => {
+                xtermIns.write('\x1B[D') // 修改光标位置
+              })
+              curIndex += textArr.length;
+              return false
+            }
+            xtermIns.write(copyText)
+            curIndex += textArr.length
+            cmd = [...cmd, ...textArr]
+            return false
+          }
+        }
+        return true
+      }
+      return false
+    })
+
     xtermIns.onKey(({key, domEvent}) => {
-      let visibleTextArr = cmd.filter(item => !(item === '\x1B[C') && !(item === '\x1B[D') && !(item === '\x7F'))
-      const { keyCode } = domEvent
-      const disabledKey = [40, 38]
+      let visibleTextArr = cmd.filter(item => !(item === '\x1B[C') && !(item === '\x1B[D') && !(item === '\x7F'));
+      const { keyCode } = domEvent;
+      const disabledKey = [40, 38];
       // 正常情况下禁用上移下移
       if (disabledKey.includes(keyCode)) {
         return
@@ -62,7 +106,8 @@ function XtemIns() {
       } else if (key === '\x1B[D'){ // 左移
         curIndex --;
       }
-      if (key !== '\x7F') { // 删除的可以
+
+      if (key !== '\x7F') { // 排除删除的
         cmd.push(key)
       }
       switch(keyCode) {
@@ -74,17 +119,17 @@ function XtemIns() {
           }
           // 中间删除
           if (curIndex < visibleTextArr.length) {
-            const afterVisibleTextArr = visibleTextArr.slice(curIndex)
+            const afterVisibleTextArr = visibleTextArr.slice(curIndex);
             visibleTextArr.splice(curIndex - 1, 1);
             cmd = [...visibleTextArr];
-            ([...afterVisibleTextArr]).forEach(() => {
+            afterVisibleTextArr.forEach(() => {
               xtermIns.write('\x1B[C') // 右移光标
             });
             ([...afterVisibleTextArr, '']).forEach(() => {
               xtermIns.write('\b \b') // 删除文字
-            })
+            });
             xtermIns.write(afterVisibleTextArr.join('')); // 添加文字
-            ([...afterVisibleTextArr]).forEach(() => {
+            afterVisibleTextArr.forEach(() => {
               xtermIns.write('\x1B[D') // 左移动光标
             });
             curIndex --;
@@ -102,7 +147,7 @@ function XtemIns() {
             // 中间插入
             if (curIndex < visibleTextArr.length) {
               visibleTextArr.splice(curIndex, 0, key)
-              const afterVisibleTextArr = visibleTextArr.slice(curIndex + 1)
+              const afterVisibleTextArr = visibleTextArr.slice(curIndex + 1) // 可以优化
               cmd = [...visibleTextArr]
               xtermIns.write(key + afterVisibleTextArr.join(''));
               afterVisibleTextArr.forEach(() => {
