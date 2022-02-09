@@ -19,3 +19,10 @@ export type xtermHandleMap = {
     xtermBackspace: string;
     xtermSpace: string;
 }
+
+export type xtermHandleType = 'Insert' | 'Delete' | 'ShiftLeft' | 'ShiftRight' | 'Enter' | 'Paste'
+
+export type returnCmdAndCurIndex = {
+    cmd: string[];
+    curIndex: number
+}
