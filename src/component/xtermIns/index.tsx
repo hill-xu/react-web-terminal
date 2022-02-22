@@ -7,6 +7,7 @@ import 'xterm/css/xterm.css'
 import 'xterm/lib/xterm'
 import { KEY_CODE_MAP, XTERM_KEY_MAP } from './constants'
 import { xtermHandleType, returnCmdAndCurIndex } from './index.d'
+import socket from 'socket.io-client';
 function XtemIns() {
   const initXtrem = () => {
     const xtermIns: Terminal = new Terminal({
@@ -40,7 +41,16 @@ function XtemIns() {
     let curIndex: number = 0; // 光标所在位置
     let handleType: xtermHandleType = 'Insert'; // 操作状态
     let disabledHandle: boolean = false; // 操作状态禁用
-
+    const io = socket('ws://127.0.0.1:3001');
+    io.on('connect', () => {
+      console.log('连接成功');
+      io.on('message', data => {
+        xtermIns.write(`\r\n$ `)
+        const result = xtermHandleInsert(xtermIns, cmd, curIndex, data)
+        cmd = result.cmd
+        curIndex = result.curIndex
+      })
+    })
     // 
     xtermIns.onData((data: string) => {
       if (disabledHandle) {
@@ -68,6 +78,9 @@ function XtemIns() {
           result = {
             cmd: [],
             curIndex: 0
+          }
+          if (io) {
+            io.send(cmd.join(''))
           }
           break
       }
@@ -145,6 +158,7 @@ function XtemIns() {
     })
     xtermIns.writeln('\x1b[1;1;32mwellcom to web terminal!\x1b[0m')
     xtermIns.write(`\r\n$ `)
+
   }
 
   // 是否包含中文
